@@ -75,91 +75,7 @@ public class Main {
             }catch (Exception e){
             }
     }
-    
-    // Wrong Authentication
-    public void wrongAuthen(int block){
-        System.out.println("Wrong Authentication");
-	try{
-            // show the list of available terminals
-	    TerminalFactory factory = TerminalFactory.getDefault();
-	    List <CardTerminal> terminals = factory.terminals().list();
-	    this.terminal =terminals.get(0);  
-	           
-            // establish a connection with the card
-	    Card card = terminal.connect("T=1");
-	    this.channel = card.getBasicChannel();
-            
-            // load the key -> Get challenge command
-            byte[] c_loadKey = { (byte) 0xFF, (byte) 0x82, (byte) 0x00, (byte) 0x00, (byte) 0x06, 
-                    			(byte)0x55, (byte)0x44, (byte)0x33, 
-                                        (byte)0x22, (byte)0x11, (byte)0x00};
-            CommandAPDU loadKey = new CommandAPDU(c_loadKey);
-            ResponseAPDU res = channel.transmit(loadKey);
-            String load = arrayToHex(res.getBytes());
-            if(load.equals("9000"))
-                load = "Load: "+load+" OK";
-	    else
-	        load = "Load: "+load+" ERROR";
-            System.out.println(load);
-            
-            // authenticate with wrong key (in this case Key A)
-            byte b = getByte(block);  
-            byte[] c_auth = { (byte) 0xFF, (byte) 0x86, (byte) 0x00, (byte) 0x00, (byte) 0x05,
-                (byte) 0x01, (byte) 0x00, (byte) b, (byte) 0x60, (byte) 0x00};
-            CommandAPDU auth = new CommandAPDU(c_auth);
-            ResponseAPDU rauth = channel.transmit(auth);
-            String auten = arrayToHex(rauth.getBytes()); 
-            if(auten.equals("9000"))
-                auten = "Authentication: "+auten+" OK";
-            else
-		auten = "Authentication: "+auten+" ERROR";
-            System.out.println(auten);
-	}catch (Exception e){
-	}
-    }
-    
-    // Right Authentication
-    public void rightAuthen(int block){
-        System.out.println("Right Authentication");
-        try{
-            // show the list of available terminals
-	    TerminalFactory factory = TerminalFactory.getDefault();
-	    List <CardTerminal> terminals = factory.terminals().list();
-	    this.terminal =terminals.get(0);  
-	           
-            // establish a connection with the card
-	    Card card = terminal.connect("T=1");
-	    this.channel = card.getBasicChannel();
-	  	                
-            // load the key -> Get challenge command
-            byte[] c_loadKey = {(byte) 0xFF, (byte) 0x82, (byte) 0x00, (byte) 0x00, (byte) 0x06,
-                keyRight[5], keyRight[4], keyRight[3],
-                keyRight[2], keyRight[1], keyRight[0]};
-            CommandAPDU loadKey = new CommandAPDU(c_loadKey);
-            ResponseAPDU res = channel.transmit(loadKey);
-            String load = arrayToHex(res.getBytes());
-            if(load.equals("9000"))
-                load = "Load: "+load+" OK";
-	    else
-	        load = "Load: "+load+" ERROR";
-            System.out.println(load);
-            
-            // authenticate with right key (in this case Key B)
-            byte b = getByte(block);  
-            byte[] c_auth = { (byte) 0xFF, (byte) 0x86, (byte) 0x00, (byte) 0x00, (byte) 0x05,
-                (byte) 0x01, (byte) 0x00, (byte) b, (byte) 0x61, (byte) 0x00};
-            CommandAPDU auth = new CommandAPDU(c_auth);
-            ResponseAPDU rauth = channel.transmit(auth);
-            String auten = arrayToHex(rauth.getBytes()); 
-            if(auten.equals("9000"))
-                auten = "Authentication: "+auten+" OK";
-            else
-		auten = "Authentication: "+auten+" ERROR";
-            System.out.println(auten);
-        }catch (Exception e){
-	}
-    }
-    
+       
     // Read Block #b, Sector #s
     public ArrayList<String> read(int block, int sector){
         System.out.println("Read Block #"+block);
@@ -346,67 +262,6 @@ public class Main {
         }
     }
     
-    // Decrement Value to Block 
-    public void decValue(byte[] val, int block, int sector){
-        System.out.println("Decrement Value to Block #"+block);
-        ArrayList<String>response = new ArrayList<String>();
-        try{
-            // show the list of available terminals
-	    TerminalFactory factory = TerminalFactory.getDefault();
-	    List <CardTerminal> terminals = factory.terminals().list();
-	    this.terminal =terminals.get(0);  
-	           
-            // establish a connection with the card
-	    Card card = terminal.connect("T=1");
-	    this.channel = card.getBasicChannel();
-            
-            // load the key for sector #01 -> Get challenge command
-            byte[] c_loadKey = {(byte) 0xFF, (byte) 0x82, (byte) 0x00, (byte) 0x00, (byte) 0x06,
-                keyRight[5], keyRight[4], keyRight[3],
-                keyRight[2], keyRight[1], keyRight[0]};
-            CommandAPDU loadKey = new CommandAPDU(c_loadKey);
-            ResponseAPDU res = channel.transmit(loadKey);
-            String load = arrayToHex(res.getBytes());
-            if(load.equals("9000"))
-                load = "Load: "+load+" OK";
-	    else
-	        load = "Load: "+load+" ERROR";
-            System.out.println(load);
-            
-            // authenticate with right key
-            byte b = getByte(block);  
-            byte[] c_auth = { (byte) 0xFF, (byte) 0x86, (byte) 0x00, (byte) 0x00, (byte) 0x05,
-                (byte) 0x01, (byte) 0x00, (byte) b, (byte) 0x60, (byte) 0x00};
-            CommandAPDU auth = new CommandAPDU(c_auth);
-            ResponseAPDU rauth = channel.transmit(auth);
-            String auten = arrayToHex(rauth.getBytes()); 
-            if(auten.equals("9000"))
-                auten = "Authentication: "+auten+" OK";
-            else
-		auten = "Authentication: "+auten+" ERROR";
-            System.out.println(auten);
-            
-            // Decrement Value to Block #b
-            byte[] c_valueAdd = { (byte) 0xFF, (byte) 0xF0, (byte) 0x00, (byte) 0x05, (byte) 0x06,  
-                                  (byte) 0xC0, (byte) 0x05, val[3], val[2], val[1], val[0]};
-
-            CommandAPDU addValue = new CommandAPDU(c_valueAdd);
-	    ResponseAPDU rvalueAdd = channel.transmit(addValue);
-	    String data = arrayToHex(rvalueAdd.getBytes());
-            System.out.println(data);
-	    if(data.equals("6982")){
-	      	System.out.println("Addr #05: AUTEN ERROR");
-            }
-            else{
-		data = data.substring(0, 32);
-	        System.out.println("Addr #05: "+formatedData(data));
-            }
-            System.out.println(data);
-        }
-        catch(Exception e){
-        }
-    }
-    
     // Run & Debug
     public static void main(String[] args) {
         Main test = new Main();
@@ -417,36 +272,13 @@ public class Main {
         
         int block = 5;
         int sector = 1;
-        
-        test.wrongAuthen(block);
-        System.out.println("**********************************************************");
-        
-        test.rightAuthen(block);
-        System.out.println("**********************************************************");
-        
-        ArrayList<String>output = test.read(block,sector);
-	for(int i=0; i<output.size();i++){
-	    System.out.println(output.get(i));
-	}
-        System.out.println("**********************************************************");
-	
-        /*byte[] newData = {(byte)0x0F,(byte)0x0E,(byte)0x0D,(byte)0x0C,
-                          (byte)0x0B,(byte)0x0A,(byte)0x09,(byte)0x08,
-                          (byte)0x07,(byte)0x06,(byte)0x05,(byte)0x04,
-                          (byte)0x03,(byte)0x02,(byte)0x01,(byte)0x00};*/
-        
+	       
         // Prepare block as value block
         byte[] newData = {(byte)0xFA,(byte)0x05,(byte)0xFA,(byte)0x05,
                           (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
                           (byte)0xFF,(byte)0xFF,(byte)0xFF,(byte)0xFF,
                           (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00};
-        
-        // Modify sector trailer                  
-        /*byte[] newData = {(byte)0xFF,(byte)0xFF,(byte)0xFF,(byte)0xFF,
-                          (byte)0xFF,(byte)0xFF,(byte)0x8E,(byte)0x77,
-                          (byte)0x18,(byte)0x69,(byte)0xFF,(byte)0xFF,
-                          (byte)0xFF,(byte)0xFF,(byte)0xFF,(byte)0xFF};*/
-        
+                
         test.write(newData,block,sector); 
         
         output = test.read(block,sector);
@@ -455,7 +287,6 @@ public class Main {
 	}
         System.out.println("**********************************************************");
         
-        block = 5;
         byte[] Inc = {(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x64};
         test.incValue(Inc,block,sector);
                 
@@ -463,17 +294,7 @@ public class Main {
 	for(int i=0; i<output.size();i++){
 	    System.out.println(output.get(i));
 	}
-        System.out.println("**********************************************************");
-        
-        byte[] Dec = {(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01};
-        test.decValue(Dec,block,sector);
-                
-        output = test.read(block,sector);
-	for(int i=0; i<output.size();i++){
-	    System.out.println(output.get(i));
-	}
-        System.out.println("**********************************************************");
-        
+        System.out.println("**********************************************************");      
         
     }    
     
