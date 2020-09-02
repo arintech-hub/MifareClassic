@@ -1,9 +1,9 @@
 /*
  * The content of this project itself is licensed under the Creative Commons }
  * Attribution 3.0 Unported license, and the underlying source code used to 
- * format and display that content is licensed under the MIT license.
+ * format and display that content is licensed under the GNU License
  */
-package com.arin.authenClassic;
+package com.arin.pract01;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +17,10 @@ import javax.smartcardio.*;
 public class Main {
     
     // Fields
-    byte[] keyA = {(byte)0xA5,(byte)0xA4,(byte)0xA3,
+    byte[] keyWrong = {(byte)0xA5,(byte)0xA4,(byte)0xA3,
                     (byte)0xA2,(byte)0xA1,(byte)0xA0};
     
-    byte[] keyB = {(byte)0xFF,(byte)0xFF,(byte)0xFF,
+    byte[] keyRight = {(byte)0xFF,(byte)0xFF,(byte)0xFF,
                     (byte)0xFF,(byte)0xFF,(byte)0xFF};
 
     List <CardTerminal> terminals;
@@ -46,19 +46,7 @@ public class Main {
     public void setUID(String uid){
         this.rUID = uid;
     }
-    
-    private String arrayToHex(byte[] data) {
-        StringBuffer sb = new StringBuffer();
-        for(int i=0 ; i<data.length; i++){
-            String bs = Integer.toHexString(data[i] & 0xFF);
-            if (bs.length() == 1){
-                sb.append(0);
-            }
-            sb.append(bs);
-        }
-	return sb.toString();
-    }
-    
+      
     // Constructor
     public Main(){
 	try{
@@ -89,7 +77,7 @@ public class Main {
     }
     
     // Wrong Authentication
-    public void wrongAuthen(){
+    public void wrongAuthen(int block){
         System.out.println("Wrong Authentication");
 	try{
             // show the list of available terminals
@@ -100,11 +88,8 @@ public class Main {
             // establish a connection with the card
 	    Card card = terminal.connect("T=1");
 	    this.channel = card.getBasicChannel();
-	  	      
-            int sector = 1;
-            int block = 4;
             
-            // load the key for sector #01 -> Get challenge command
+            // load the key -> Get challenge command
             byte[] c_loadKey = { (byte) 0xFF, (byte) 0x82, (byte) 0x00, (byte) 0x00, (byte) 0x06, 
                     			(byte)0x55, (byte)0x44, (byte)0x33, 
                                         (byte)0x22, (byte)0x11, (byte)0x00};
@@ -117,7 +102,7 @@ public class Main {
 	        load = "Load: "+load+" ERROR";
             System.out.println(load);
             
-            // authenticate with wrong key
+            // authenticate with wrong key (in this case Key A)
             byte b = getByte(block);  
             byte[] c_auth = { (byte) 0xFF, (byte) 0x86, (byte) 0x00, (byte) 0x00, (byte) 0x05,
                 (byte) 0x01, (byte) 0x00, (byte) b, (byte) 0x60, (byte) 0x00};
@@ -134,7 +119,7 @@ public class Main {
     }
     
     // Right Authentication
-    public void rightAuthen(){
+    public void rightAuthen(int block){
         System.out.println("Right Authentication");
         try{
             // show the list of available terminals
@@ -145,14 +130,11 @@ public class Main {
             // establish a connection with the card
 	    Card card = terminal.connect("T=1");
 	    this.channel = card.getBasicChannel();
-	  	      
-            int sector = 1;
-            int block = 4;
-            
-            // load the key for sector #01 -> Get challenge command
+	  	                
+            // load the key -> Get challenge command
             byte[] c_loadKey = {(byte) 0xFF, (byte) 0x82, (byte) 0x00, (byte) 0x00, (byte) 0x06,
-                keyB[5], keyB[4], keyB[3],
-                keyB[2], keyB[1], keyB[0]};
+                keyRight[5], keyRight[4], keyRight[3],
+                keyRight[2], keyRight[1], keyRight[0]};
             CommandAPDU loadKey = new CommandAPDU(c_loadKey);
             ResponseAPDU res = channel.transmit(loadKey);
             String load = arrayToHex(res.getBytes());
@@ -162,7 +144,7 @@ public class Main {
 	        load = "Load: "+load+" ERROR";
             System.out.println(load);
             
-            // authenticate with right key
+            // authenticate with right key (in this case Key B)
             byte b = getByte(block);  
             byte[] c_auth = { (byte) 0xFF, (byte) 0x86, (byte) 0x00, (byte) 0x00, (byte) 0x05,
                 (byte) 0x01, (byte) 0x00, (byte) b, (byte) 0x61, (byte) 0x00};
@@ -175,9 +157,9 @@ public class Main {
 		auten = "Authentication: "+auten+" ERROR";
             System.out.println(auten);
         }catch (Exception e){
-	      }
+	}
     }
-   
+    
     // Run & Debug
     public static void main(String[] args) {
         Main test = new Main();
@@ -186,10 +168,15 @@ public class Main {
         System.out.println("UID: 0x"+test.rUID);
         System.out.println("**********************************************************");
         
-        test.wrongAuthen();
+        int block = 5;
+        int sector = 1;
+        
+        test.wrongAuthen(block);
         System.out.println("**********************************************************");
         
-        test.rightAuthen();    
+        test.rightAuthen(block);
+        System.out.println("**********************************************************");
+               
     }    
     
     
@@ -212,5 +199,17 @@ public class Main {
 	}
 	d = d.toUpperCase();
 	return d;
+    }
+    
+    private String arrayToHex(byte[] data) {
+        StringBuffer sb = new StringBuffer();
+        for(int i=0 ; i<data.length; i++){
+            String bs = Integer.toHexString(data[i] & 0xFF);
+            if (bs.length() == 1){
+                sb.append(0);
+            }
+            sb.append(bs);
+        }
+	return sb.toString();
     }
 }
