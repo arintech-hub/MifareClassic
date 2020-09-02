@@ -21,7 +21,7 @@ import javax.smartcardio*;
 
 TerminalFactory factory = TerminalFactory.getDefault(); # returns the default TerminalFactory instance
 CardTerminal terminals = factory.terminals().list();    # returns a new CardTerminals object encapsulating the terminals supported by this factory
-Card card = terminal.connect("T=1");                    # constructs a new Card object
+Card card = terminal.connect("T=1");                    # constructs a new Card object (the protocol in use for this types of cards, for example "T=0" or "T=1")
 CardChannel channel = card.getBasicChannel();           # returns the CardChannel for the basic logical channel
 String ATR = card.getATR();                             # returns the ATR of this card
 CommandAPDU readUID = new CommandAPDU(byte[] apdu);     # constructs a CommandAPDU from a byte array containing the complete APDU contents (header and body)
@@ -35,4 +35,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[GNU](https://www.gnu.org/licenses/why-not-lgpl.html/)
