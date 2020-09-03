@@ -6,12 +6,14 @@ The APDU is defined by the standard ISO/IEC 7816 part 4.
 ## Files
 * APDU.md               # minimal commands-response pair of Application Protocol Data Unit for Mifare Classic
 * javaxsmartcardio.md   # a summary of the javax.smartcardio Oracle API
+* VSCinstallation.md    # a sumary for the installation of Java for Visual Studio Code and how to run javax.smartcardio
 * access_bits.xls       # a calculator of access bytes given the bits and permissions
-* authentication.java   # an example of wrong and correct authentication for Mifare Classic
-* readBlock.java        # an example of reading a block or an specific amount of bytes for Mifare Classic
-* writeBlock.java       # an example of writing a block or an specific amount of bytes for Mifare Classic
-* incBlock.java         # an example of incrementing a value block for Mifare Classic
-* decBlock.java         # an example of decrementing a value block for Mifare Classic
+* Authentication.java   # an example of wrong and correct authentication for Mifare Classic
+* ReadBlock.java        # an example of reading a block or an specific amount of bytes for Mifare Classic
+* WriteBlock.java       # an example of writing a block or an specific amount of bytes for Mifare Classic
+* IncBlock.java         # an example of incrementing a value block for Mifare Classic
+* DecBlock.java         # an example of decrementing a value block for Mifare Classic
+* App.java              # an example of all the excercises above for Mifare Classic
 
 ## Installation 
 
