@@ -122,12 +122,12 @@ public class Main {
 	    ResponseAPDU rread = channel.transmit(read);
 	    String data = arrayToHex(rread.getBytes());
 	    if(data.equals("6982")){
-	      	response.add("Addr #04: AUTEN ERROR");
+	      	response.add("Addr #"+b+": AUTEN ERROR");
 		data = "ERROR";
             }
             else{
 		data = data.substring(0, 32);
-	        response.add("Addr #04: "+formatedData(data));
+	        response.add("Addr #"+b+": "+formatedData(data));
             }
 	    if(load.equals("ERROR")||auten.equals("ERROR")||data.equals("ERROR"))
                 return response;
@@ -140,7 +140,6 @@ public class Main {
     // Write Block #b, Sector #s
     public void write(byte[] newData, int block, int sector){
         System.out.println("Write Block #"+block);
-        ArrayList<String>response = new ArrayList<String>();
         try{
             // show the list of available terminals
 	    TerminalFactory factory = TerminalFactory.getDefault();
@@ -187,12 +186,12 @@ public class Main {
 	    ResponseAPDU rwrite = channel.transmit(write);
 	    String data = arrayToHex(rwrite.getBytes());
 	    if(data.equals("6982")){
-	      	System.out.println("Addr #04: AUTEN ERROR");
+	      	System.out.println("Addr #"+b+": AUTEN ERROR");
 		data = "ERROR";
             }
             else{
 		data = data.substring(0, 32);
-	        System.out.println("Addr #04: "+formatedData(data));
+	        System.out.println("Addr #"+b+": "+formatedData(data));
             }
             System.out.println(data);
         }
@@ -230,7 +229,7 @@ public class Main {
         
         test.write(newData,block,sector); 
         
-        output = test.read(block,sector);
+        ArrayList<String> output = test.read(block,sector);
 	for(int i=0; i<output.size();i++){
 	    System.out.println(output.get(i));
 	}
