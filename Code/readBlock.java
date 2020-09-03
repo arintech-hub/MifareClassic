@@ -122,12 +122,12 @@ public class Main {
 	    ResponseAPDU rread = channel.transmit(read);
 	    String data = arrayToHex(rread.getBytes());
 	    if(data.equals("6982")){
-	      	response.add("Addr #04: AUTEN ERROR");
+	      	response.add("Addr #"+b+": AUTEN ERROR");
 		data = "ERROR";
             }
             else{
 		data = data.substring(0, 32);
-	        response.add("Addr #04: "+formatedData(data));
+	        response.add("Addr #"+b+": "+formatedData(data));
             }
 	    if(load.equals("ERROR")||auten.equals("ERROR")||data.equals("ERROR"))
                 return response;
