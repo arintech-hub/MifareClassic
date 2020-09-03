@@ -1,0 +1,27 @@
+# Visual Studio Code guide for installation
+
+MifareClassic is a set of Java code examples on how to use the javax.smartcardio API with APDU commands and response pairs.
+The APDU is defined by the standard ISO/IEC 7816 part 4.
+
+## Files
+* APDU.md               # minimal commands-response pair of Application Protocol Data Unit for Mifare Classic
+* javaxsmartcardio.md   # a summary of the javax.smartcardio Oracle API
+* VSCinstallation.md    # a sumary for the installation of Java for Visual Studio Code and how to run javax.smartcardio
+* access_bits.xls       # a calculator of access bytes given the bits and permissions
+* Authentication.java   # an example of wrong and correct authentication for Mifare Classic
+* ReadBlock.java        # an example of reading a block or an specific amount of bytes for Mifare Classic
+* WriteBlock.java       # an example of writing a block or an specific amount of bytes for Mifare Classic
+* IncBlock.java         # an example of incrementing a value block for Mifare Classic
+* DecBlock.java         # an example of decrementing a value block for Mifare Classic
+* App.java              # an example of all the excercises above for Mifare Classic
+
+## Installation 
+
+There is no complete package for installation, use the java docs as examples as fit. In order to run them, the recommendation is to use
+an IDE like ApacheNetbeans, Eclipse or use VisualStudio Code
+
+```bash
+install ApacheNetbeans
+install Eclipse
+install VisualStudio Code
+```
